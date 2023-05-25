@@ -79,8 +79,6 @@ service.getItemVersions = async (projectId, itemId, token) => {
 service.getManifest = async (version_id, token) => {
   const resp = await new APS.DerivativesApi().getManifest(version_id.replace('-', '/'), null, internalAuthClient, token);
   return resp.body;
-  let derivatives = resp.body.derivatives[0].children;
-  let twoDimensionsViews = derivatives.filter(v => v.role == '2d');
 }
 
 service.getAECModelData = async (version_id, aec_model_data_guid) => {

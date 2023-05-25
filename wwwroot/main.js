@@ -19,16 +19,35 @@ try {
 }
 
 async function downloadpdfs(id) {
-  const pdfsUrlObjects = await getJSON(`/api/derivatives/${window.btoa(id).replace('/', '-')}/downloadurls?format=pdf`);
-  showToast(`${pdfsUrlObjects.derivatives.length} PDF sheets found!`);
+  // const pdfsUrlObjects = await getJSON(`/api/derivatives/${window.btoa(id).replace('/', '-')}/downloadurls`);
+  // showToast(`${pdfsUrlObjects.derivatives.length} PDF sheets found!`);
 
+  Swal.fire({
+    title: 'Download your PDFs',
+    showCancelButton: true,
+    confirmButtonText: 'Start Download!',
+    showLoaderOnConfirm: true,
+    preConfirm: async () => {
+      const pdfsUrlObjects = await getJSON(`/api/derivatives/${window.btoa(id).replace('/', '-')}/downloadurls`);
+      return pdfsUrlObjects;
+    },
+    allowOutsideClick: () => !Swal.isLoading()
+  }).then(async (pdfsUrlObjects) => {
+    // showToast(`${pdfsUrlObjects.derivatives.length} PDF sheets found!`);
+    if (parseInt(pdfsUrlObjects.value.rvtversion) < 2022)
+      showToast(`Only 2022 or later models generate PDFs for 2d views`);
 
+    showToast(`${pdfsUrlObjects.value.derivatives.length} PDF sheets found!`);
+    for (const pdfUrlObject of pdfsUrlObjects.value.derivatives) {
+      await downloadpdf(pdfUrlObject);
+    }
+  })
 
-  if (parseInt(pdfsUrlObjects.rvtversion) < 2022)
-    showToast(`Only 2022 or later models generate PDFs for 2d views`);
-  for (const pdfUrlObject of pdfsUrlObjects.derivatives) {
-    await downloadpdf(pdfUrlObject);
-  }
+  // if (parseInt(pdfsUrlObjects.rvtversion) < 2022)
+  //   showToast(`Only 2022 or later models generate PDFs for 2d views`);
+  // for (const pdfUrlObject of pdfsUrlObjects.derivatives) {
+  //   await downloadpdf(pdfUrlObject);
+  // }
 }
 
 async function downloadpdf(pdfUrlObject) {

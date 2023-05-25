@@ -32,7 +32,7 @@ async function downloadpdfs(id) {
 async function downloadpdf(pdfUrlObject) {
   const a = document.createElement('a');
   a.style.display = 'none';
-  a.href = `${pdfUrlObject.url.replace('https://', '')}?Policy=${pdfUrlObject['CloudFront-Policy']}&Key-Pair-Id=${pdfUrlObject['CloudFront-Key-Pair-Id']}&Signature=${pdfUrlObject['CloudFront-Signature']}`;
+  a.href = `${pdfUrlObject.url}?Policy=${pdfUrlObject['CloudFront-Policy']}&Key-Pair-Id=${pdfUrlObject['CloudFront-Key-Pair-Id']}&Signature=${pdfUrlObject['CloudFront-Signature']}`;
   // the filename you want
   a.download = pdfUrlObject.name;
   a.target = "_blank";

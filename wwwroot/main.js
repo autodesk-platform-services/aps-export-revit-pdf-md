@@ -21,26 +21,24 @@ try {
 async function downloadpdfs(id) {
   const pdfsUrlObjects = await getJSON(`/api/derivatives/${window.btoa(id).replace('/', '-')}/downloadurls?format=pdf`);
   showToast(`${pdfsUrlObjects.derivatives.length} PDF sheets found!`);
+
   if (parseInt(pdfsUrlObjects.rvtversion) < 2022)
     showToast(`Only 2022 or later models generate PDFs for 2d views`);
-
   for (const pdfUrlObject of pdfsUrlObjects.derivatives) {
     await downloadpdf(pdfUrlObject);
   }
 }
 
 async function downloadpdf(pdfUrlObject) {
-  let resp = await fetch(`${pdfUrlObject.url}?Policy=${pdfUrlObject['CloudFront-Policy']}&Key-Pair-Id=${pdfUrlObject['CloudFront-Key-Pair-Id']}&Signature=${pdfUrlObject['CloudFront-Signature']}`);
-  let respblob = await resp.blob();
-  const url = window.URL.createObjectURL(respblob);
   const a = document.createElement('a');
   a.style.display = 'none';
-  a.href = url;
+  a.href = `${pdfUrlObject.url.replace('https://', '')}?Policy=${pdfUrlObject['CloudFront-Policy']}&Key-Pair-Id=${pdfUrlObject['CloudFront-Key-Pair-Id']}&Signature=${pdfUrlObject['CloudFront-Signature']}`;
   // the filename you want
   a.download = pdfUrlObject.name;
+  a.target = "_blank";
   document.body.appendChild(a);
   a.click();
-  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 }
 
 async function showToast(message) {

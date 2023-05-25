@@ -22,6 +22,8 @@ async function downloadpdfs(id) {
   const pdfsUrlObjects = await getJSON(`/api/derivatives/${window.btoa(id).replace('/', '-')}/downloadurls?format=pdf`);
   showToast(`${pdfsUrlObjects.derivatives.length} PDF sheets found!`);
 
+
+
   if (parseInt(pdfsUrlObjects.rvtversion) < 2022)
     showToast(`Only 2022 or later models generate PDFs for 2d views`);
   for (const pdfUrlObject of pdfsUrlObjects.derivatives) {

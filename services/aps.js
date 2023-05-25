@@ -103,7 +103,7 @@ service.getDownloadUrls = async (version_id, token) => {
 };
 
 async function getSignedUrlFromDerivative(urn, derivative, token) {
-  let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/manifest/${derivative.urn}/signedcookies`;
+  let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn.replaceAll('=', '')}/manifest/${derivative.urn}/signedcookies?useCdn=true`;
 
   let options = {
     method: 'GET',

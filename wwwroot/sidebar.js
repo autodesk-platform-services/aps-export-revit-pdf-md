@@ -1,9 +1,9 @@
 export async function getJSON(url) {
   const resp = await fetch(url);
   if (!resp.ok) {
-      alert('Could not load tree data. See console for more details.');
-      console.error(await resp.text());
-      return [];
+    alert('Could not load tree data. See console for more details.');
+    console.error(await resp.text());
+    return [];
   }
   return resp.json();
 }
@@ -24,12 +24,13 @@ async function getProjects(hubId) {
 
 async function getContents(hubId, projectId, folderId = null) {
   const contents = await getJSON(`/api/hubs/${hubId}/projects/${projectId}/contents` + (folderId ? `?folder_id=${folderId}` : ''));
-  return contents.map(item => {
-      if (item.type === 'folders') {
-          return createTreeNode(`folder|${hubId}|${projectId}|${item.id}`, item.attributes.displayName, 'icon-my-folder', true);
-      } else {
-          return createTreeNode(`item|${hubId}|${projectId}|${item.id}`, item.attributes.displayName, 'icon-item', true);
-      }
+  const onlyRVTItemsNFolders = contents.filter(c => c.type === 'folders' || c.attributes.displayName.split('.')[1] == 'rvt');
+  return onlyRVTItemsNFolders.map(item => {
+    if (item.type === 'folders') {
+      return createTreeNode(`folder|${hubId}|${projectId}|${item.id}`, item.attributes.displayName, 'icon-my-folder', true);
+    } else {
+      return createTreeNode(`item|${hubId}|${projectId}|${item.id}`, item.attributes.displayName, 'icon-item', true);
+    }
   });
 }
 
@@ -41,27 +42,27 @@ async function getVersions(hubId, projectId, itemId) {
 export function initTree(selector, onSelectionChanged) {
   // See http://inspire-tree.com
   const tree = new InspireTree({
-      data: function (node) {
-          if (!node || !node.id) {
-              return getHubs();
-          } else {
-              const tokens = node.id.split('|');
-              switch (tokens[0]) {
-                  case 'hub': return getProjects(tokens[1]);
-                  case 'project': return getContents(tokens[1], tokens[2]);
-                  case 'folder': return getContents(tokens[1], tokens[2], tokens[3]);
-                  case 'item': return getVersions(tokens[1], tokens[2], tokens[3]);
-                  default: return [];
-              }
-          }
+    data: function (node) {
+      if (!node || !node.id) {
+        return getHubs();
+      } else {
+        const tokens = node.id.split('|');
+        switch (tokens[0]) {
+          case 'hub': return getProjects(tokens[1]);
+          case 'project': return getContents(tokens[1], tokens[2]);
+          case 'folder': return getContents(tokens[1], tokens[2], tokens[3]);
+          case 'item': return getVersions(tokens[1], tokens[2], tokens[3]);
+          default: return [];
+        }
       }
+    }
   });
   tree.on('node.click', function (event, node) {
-      event.preventTreeDefault();
-      const tokens = node.id.split('|');
-      if (tokens[0] === 'version') {
-          onSelectionChanged(tokens[1]);
-      }
+    event.preventTreeDefault();
+    const tokens = node.id.split('|');
+    if (tokens[0] === 'version') {
+      onSelectionChanged(tokens[1]);
+    }
   });
   return new InspireTreeDOM(tree, { target: selector });
 }

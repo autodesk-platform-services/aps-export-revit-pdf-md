@@ -7,10 +7,10 @@ router.use('/api/derivatives', authRefreshMiddleware);
 
 router.get('/api/derivatives/:derivative_id/downloadurls', async function (req, res, next) {
   try {
-      const downloadUrls = await getDownloadUrls(req.params.derivative_id, req.internalOAuthToken);
-      res.json({derivatives: downloadUrls});
+    const downloadUrls = await getDownloadUrls(req.params.derivative_id, req.internalOAuthToken);
+    res.json(downloadUrls);
   } catch (err) {
-      next(err);
+    next(err);
   }
 });
 

@@ -61,7 +61,7 @@ export function initTree(selector, onSelectionChanged) {
     event.preventTreeDefault();
     const tokens = node.id.split('|');
     if (tokens[0] === 'version') {
-      onSelectionChanged(tokens[1]);
+      onSelectionChanged(tokens[1], node.itree.parent.text);
     }
   });
   return new InspireTreeDOM(tree, { target: selector });

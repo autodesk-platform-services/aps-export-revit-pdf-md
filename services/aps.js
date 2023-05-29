@@ -92,12 +92,14 @@ service.getDownloadUrls = async (version_id, token) => {
   let pdfViews = derivatives.filter(v => v.role == '2d' && !!v.properties['Print Setting']);
   let pdfDerivatives = pdfViews.map(v => v.children.find(d => d.role == "pdf-page"));
   let downloadUrls = [];
-  for (const derivative of pdfDerivatives) {
-    let newDerivativeUrl = await getSignedUrlFromDerivative(version_id.replace('-', '_'), derivative, token);
-    downloadUrls.push(newDerivativeUrl);
+  let revitVersion = resp.body.derivatives[0].properties["Document Information"].RVTVersion;
+  if (!!revitVersion || parseInt(revitVersion) > 2022) {
+    for (const derivative of pdfDerivatives) {
+      let newDerivativeUrl = await getSignedUrlFromDerivative(version_id.replace('-', '_'), derivative, token);
+      downloadUrls.push(newDerivativeUrl);
+    }
   }
-  // return downloadUrls;
-  return { "derivatives": downloadUrls, "RVTVersion": resp.body.derivatives[0].properties["Document Information"].RVTVersion };
+  return { "derivatives": downloadUrls, "RVTVersion": revitVersion };
 };
 
 async function getSignedUrlFromDerivative(urn, derivative, token) {

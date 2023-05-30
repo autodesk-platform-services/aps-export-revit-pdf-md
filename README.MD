@@ -10,7 +10,7 @@ When you submit a translation for a Revit 2022 file or later, it generates the 2
 We can take advantage of this fact to download these PDFs wherever they're available (Bucket, ACC, BIM 360...).
 Many workflows are possible in this scenarion, integrating with Webhooks, 3rd party services, other products...
 
-![thumbnail]()
+![thumbnail](./images/thumbnail.png)
 
 ### The approach
 
@@ -18,40 +18,63 @@ We are basically take advantage of the [manifest](https://aps.autodesk.com/en/do
 
 ```js
 service.getDownloadUrls = async (version_id, token) => {
-  const resp = await new APS.DerivativesApi().getManifest(version_id.replace('-', '/'), null, internalAuthClient, token);
+  const resp = await new APS.DerivativesApi().getManifest(
+    version_id.replace("-", "/"),
+    null,
+    internalAuthClient,
+    token
+  );
   let derivatives = resp.body.derivatives[0].children;
-  let pdfViews = derivatives.filter(v => v.role == '2d' && !!v.properties['Print Setting']);
-  let pdfDerivatives = pdfViews.map(v => v.children.find(d => d.role == "pdf-page"));
+  let pdfViews = derivatives.filter(
+    (v) => v.role == "2d" && !!v.properties["Print Setting"]
+  );
+  let pdfDerivatives = pdfViews.map((v) =>
+    v.children.find((d) => d.role == "pdf-page")
+  );
   let downloadUrls = [];
   for (const derivative of pdfDerivatives) {
-    let newDerivativeUrl = await getSignedUrlFromDerivative(version_id.replace('-', '_'), derivative, token);
+    let newDerivativeUrl = await getSignedUrlFromDerivative(
+      version_id.replace("-", "_"),
+      derivative,
+      token
+    );
     downloadUrls.push(newDerivativeUrl);
   }
   // return downloadUrls;
-  return { "derivatives": downloadUrls, "RVTVersion": resp.body.derivatives[0].properties["Document Information"].RVTVersion };
+  return {
+    derivatives: downloadUrls,
+    RVTVersion:
+      resp.body.derivatives[0].properties["Document Information"].RVTVersion,
+  };
 };
 
 async function getSignedUrlFromDerivative(urn, derivative, token) {
-  let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn.replaceAll('=', '')}/manifest/${derivative.urn}/signedcookies?useCdn=true`;
+  let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn.replaceAll(
+    "=",
+    ""
+  )}/manifest/${derivative.urn}/signedcookies?useCdn=true`;
 
   let options = {
-    method: 'GET',
+    method: "GET",
     headers: {
-      Authorization: 'Bearer ' + token.access_token
-    }
+      Authorization: "Bearer " + token.access_token,
+    },
   };
 
   let resp = await fetch(url, options);
   let respJSON = await resp.json();
-  let policy = resp.headers.raw()['set-cookie'][0].split('=')[1].split(';')[0];
-  let keypair = resp.headers.raw()['set-cookie'][1].split('=')[1].split(';')[0];
-  let signature = resp.headers.raw()['set-cookie'][2].split('=')[1].split(';')[0];
+  let policy = resp.headers.raw()["set-cookie"][0].split("=")[1].split(";")[0];
+  let keypair = resp.headers.raw()["set-cookie"][1].split("=")[1].split(";")[0];
+  let signature = resp.headers
+    .raw()
+    ["set-cookie"][2].split("=")[1]
+    .split(";")[0];
   let data = {
-    "name": derivative.urn.split('/').slice(-1)[0],
-    "url": respJSON.url,
+    name: derivative.urn.split("/").slice(-1)[0],
+    url: respJSON.url,
     "CloudFront-Policy": policy,
     "CloudFront-Key-Pair-Id": keypair,
-    "CloudFront-Signature": signature
+    "CloudFront-Signature": signature,
   };
 
   return data;

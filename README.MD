@@ -83,14 +83,52 @@ async function getSignedUrlFromDerivative(urn, derivative, token) {
 
 In this case, we're downloading the PDFs from BIM 360/ACC, so we just need a version id.
 
-### Limitations
+## Development
+
+### Prerequisites
+
+- [APS credentials](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/create-app)
+- Provisioned access to [BIM 360 Docs](https://forge.autodesk.com/en/docs/bim360/v1/tutorials/getting-started/manage-access-to-docs/)
+  or Autodesk Construction Cloud
+- [Node.js](https://nodejs.org) (we recommend the Long Term Support version)
+- Terminal (for example, [Windows Command Prompt](https://en.wikipedia.org/wiki/Cmd.exe)
+  or [macOS Terminal](https://support.apple.com/guide/terminal/welcome/mac))
+
+### Setup & Run
+
+- Clone this repository
+- Install dependencies: `yarn install` or `npm install`
+- Setup environment variables:
+  - `APS_CLIENT_ID` - your APS application client ID
+  - `APS_CLIENT_SECRET` - your APS application client secret
+  - `APS_CALLBACK_URL` - URL for your users to be redirected to after they successfully log in with their Autodesk account
+    - For local development, the callback URL is `http://localhost:8080/api/auth/callback`
+    - For applications deployed to a custom domain, the callback URL is `http://<your-domain>/api/auth/callback` or `https://<your-domain>/api/auth/callback`
+    - Do not forget to update the callback URL for your application in https://forge.autodesk.com/myapps as well
+  - `SERVER_SESSION_SECRET` - arbitrary phrase used to encrypt/decrypt server session cookies
+- Run the server: `yarn start` or `npm start`
+
+> When using [Visual Studio Code](https://code.visualstudio.com),
+> you can specify the env. variables listed above in a _.env_ file in this
+> folder, and run & debug the application directly from the editor.
+
+### Troubleshooting
 
 For this workflow to work, your Revit file needs to be from version 2022 or later, and it needs to be published after November 4th of 2021.
 This last restriction is because only after this date the extractor started adding the Revit version in the manifest (refer to [this blog](https://aps.autodesk.com/blog/check-version-revit-file-hosted-cloud)).
 
-Also, for it to download the PDFs you might need to change your browser settings.
+Also, for it to download the PDFs you might need to change your browser settings (allow pop-ups and download PDFs instead of showing in new tab).
 
-Here's the way to do it in Chrome
-You can go to `Settings > Privacy and Security > Additional Content Settings > PDF documents > Download PDFs`
-
+Refer here to configure your browser to download PDFs instead of opening them in a new tab: https://www.howtogeek.com/721441/how-to-download-pdfs-instead-of-previewing-them-in-chrome-firefox-and-edge/
 ![chrome_setting](./images/chrome_setting.png)
+
+Refer here to configure your browser to allow pop-ups (each PDF we download opens a new pop-up): https://blog.getadblock.com/how-to-disable-pop-up-blockers-in-every-browser-a1cccbae53e7
+![chrome_setting](./images/popupblocker.png)
+
+## License
+
+This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
+
+## Written by
+
+João Martins [@JooPaulodeOrne2](http://twitter.com/JooPaulodeOrne2), [APS Partner Development](http://aps.autodesk.com)

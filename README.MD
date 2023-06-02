@@ -1,5 +1,16 @@
 # Revit PDFs Exporter MD
 
+![Platforms](https://img.shields.io/badge/platform-Windows|MacOS-lightgray.svg)
+[![node.js](https://img.shields.io/badge/Node.js-16.15-blue.svg)](https://nodejs.org)
+[![npm](https://img.shields.io/badge/npm-8.5-blue.svg)](https://www.npmjs.com/)
+[![License](http://img.shields.io/:license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+
+[![oAuth2](https://img.shields.io/badge/oAuth2-v1-green.svg)](http://developer.autodesk.com/)
+[![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
+[![Model-Derivative](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
+[![BIM360](https://img.shields.io/badge/BIM360-v1-green.svg)](http://developer.autodesk.com/)
+[![ACC](https://img.shields.io/badge/ACC-v1-green.svg)](http://developer.autodesk.com/)
+
 This sample shows a way to export PDFs from a Revit designs using Model Derivative.
 
 ### DEMO: aps-revit-pdf-exporter.autodesk.io/
